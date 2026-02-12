@@ -19,10 +19,10 @@ define('OPENAI_API_KEY', 'sk-proj-6So5EfNDFV73jpdbo0EXLId45N6ytxT9eaYzqIShj1mLN_
 define('OPENAI_MODEL', 'gpt-4o-mini');
 
 // Maks tokens i svaret (jo høyere, jo lengre svar kan AI-en gi)
-define('OPENAI_MAX_TOKENS', 1000);
+define('OPENAI_MAX_TOKENS', 1067);
 
 // Temperatur - 0 = mer presis, 1 = mer kreativ
-define('OPENAI_TEMPERATURE', 0.67);
+define('OPENAI_TEMPERATURE', 0.267);
 
 /**
  * SYSTEM PROMPT - Dette er "personligheten" til AI-en din!
