@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lag din egen AI Chatbot - Dokumentasjon</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --primary-bg: rgba(99, 102, 241, 0.1);
+            --accent: #06b6d4;
+            --accent-light: #22d3ee;
+            --bg-main: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-code: #0d1117;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav__container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav__logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav__logo i {
+            color: var(--primary-light);
+        }
+
+        .nav__links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav__link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav__link:hover {
+            color: var(--primary-light);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-main) 0%, var(--bg-secondary) 100%);
+        }
+
+        .hero__icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero__title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero__subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Main Content */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .toc__title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc__title i {
+            color: var(--primary-light);
+        }
+
+        .toc__list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .toc__item a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .toc__item a:hover {
+            background: var(--primary-bg);
+            color: var(--primary-light);
+        }
+
+        .toc__item a::before {
+            content: "→";
+            color: var(--primary);
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section__title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section__title i {
+            color: var(--primary-light);
+            font-size: 1.5rem;
+        }
+
+        .section__subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box--tip {
+            border-left: 4px solid var(--success);
+        }
+
+        .info-box--warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .info-box--important {
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-box__title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box--tip .info-box__title {
+            color: var(--success);
+        }
+
+        .info-box--warning .info-box__title {
+            color: var(--warning);
+        }
+
+        .info-box--important .info-box__title {
+            color: var(--primary-light);
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Code Blocks */
+        pre[class*="language-"] {
+            background: var(--bg-code) !important;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            padding: 1.25rem !important;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+
+        :not(pre) > code {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Variable Table */
+        .var-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .var-table th,
+        .var-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .var-table th {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .var-table td {
+            color: var(--text-secondary);
+        }
+
+        .var-table tr:hover td {
+            background: var(--bg-card);
+        }
+
+        .var-table code {
+            white-space: nowrap;
+        }
+
+        /* File Structure */
+        .file-tree {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        .file-tree__item {
+            padding: 0.25rem 0;
+            color: var(--text-secondary);
+        }
+
+        .file-tree__item--folder {
+            color: var(--accent-light);
+        }
+
+        .file-tree__item--file {
+            color: var(--text-primary);
+        }
+
+        .file-tree__item--important {
+            color: var(--warning);
+        }
+
+        .file-tree__desc {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Flow Diagram */
+        .flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .flow__step {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .flow__step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        .flow__step-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .flow__arrow {
+            color: var(--primary-light);
+            font-size: 1.5rem;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav__links {
+                display: none;
+            }
+
+            .hero__title {
+                font-size: 1.75rem;
+            }
+
+            .hero__subtitle {
+                font-size: 1rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .section__title {
+                font-size: 1.4rem;
+            }
+
+            .var-table {
+                font-size: 0.85rem;
+            }
+
+            .var-table th,
+            .var-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .flow {
+                flex-direction: column;
+            }
+
+            .flow__arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-main);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) var(--bg-main);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav__container">
+            <a href="#" class="nav__logo">
+                <i class="fas fa-robot"></i>
+                AI Chatbot Docs
+            </a>
+            <ul class="nav__links">
+                <li><a href="#intro" class="nav__link">Introduksjon</a></li>
+                <li><a href="#struktur" class="nav__link">Filstruktur</a></li>
+                <li><a href="#config" class="nav__link">Konfigurasjon</a></li>
+                <li><a href="#api" class="nav__link">API</a></li>
+                <li><a href="#frontend" class="nav__link">Frontend</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero__icon">
+            <i class="fas fa-robot"></i>
+        </div>
+        <h1 class="hero__title">Lag din egen AI Chatbot</h1>
+        <p class="hero__subtitle">
+            En komplett guide til hvordan du bygger en AI-chatbot fra bunnen av med PHP og OpenAI API.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2 class="toc__title"><i class="fas fa-list"></i> Innholdsfortegnelse</h2>
+            <ul class="toc__list">
+                <li class="toc__item"><a href="#intro">Introduksjon</a></li>
+                <li class="toc__item"><a href="#struktur">Filstruktur</a></li>
+                <li class="toc__item"><a href="#config">Konfigurasjonsfilen</a></li>
+                <li class="toc__item"><a href="#variabler">Viktige variabler</a></li>
+                <li class="toc__item"><a href="#api">OpenAI API</a></li>
+                <li class="toc__item"><a href="#api-kall">Sende API-kall</a></li>
+                <li class="toc__item"><a href="#frontend">Frontend JavaScript</a></li>
+                <li class="toc__item"><a href="#tilpasning">Tilpasse designet</a></li>
+            </ul>
+        </div>
+
+        <!-- Section: Intro -->
+        <section id="intro" class="section">
+            <h2 class="section__title"><i class="fas fa-play-circle"></i> Introduksjon</h2>
+            
+            <p>
+                Denne guiden forklarer hvordan en AI-chatbot fungerer, fra frontend til backend. 
+                Du vil lære om variabler, API-integrasjon, og hvordan alle delene henger sammen.
+            </p>
+
+            <h3 class="section__subtitle">Hvordan fungerer det?</h3>
+            
+            <div class="flow">
+                <div class="flow__step">
+                    <div class="flow__step-number">1</div>
+                    <div class="flow__step-title">Bruker skriver</div>
+                </div>
+                <i class="fas fa-arrow-right flow__arrow"></i>
+                <div class="flow__step">
+                    <div class="flow__step-number">2</div>
+                    <div class="flow__step-title">JavaScript sender</div>
+                </div>
+                <i class="fas fa-arrow-right flow__arrow"></i>
+                <div class="flow__step">
+                    <div class="flow__step-number">3</div>
+                    <div class="flow__step-title">PHP → OpenAI</div>
+                </div>
+                <i class="fas fa-arrow-right flow__arrow"></i>
+                <div class="flow__step">
+                    <div class="flow__step-number">4</div>
+                    <div class="flow__step-title">Svar vises</div>
+                </div>
+            </div>
+
+            <p>
+                <strong>Steg 1:</strong> Brukeren skriver en melding i chat-vinduet.<br>
+                <strong>Steg 2:</strong> JavaScript fanger meldingen og sender den til PHP-backend via <code>fetch()</code>.<br>
+                <strong>Steg 3:</strong> PHP mottar meldingen og sender den videre til OpenAI API med <code>cURL</code>.<br>
+                <strong>Steg 4:</strong> OpenAI svarer, PHP returnerer svaret, og JavaScript viser det i chatten.
+            </p>
+        </section>
+
+        <!-- Section: Filstruktur -->
+        <section id="struktur" class="section">
+            <h2 class="section__title"><i class="fas fa-folder-open"></i> Filstruktur</h2>
+            
+            <p>Her er oversikten over alle filene du trenger:</p>
+
+            <div class="file-tree">
+                <div class="file-tree__item file-tree__item--folder">📁 din-chatbot/</div>
+                <div class="file-tree__item file-tree__item--file">&nbsp;&nbsp;&nbsp;├── index.php <span class="file-tree__desc">← Hovedsiden med chat-UI</span></div>
+                <div class="file-tree__item file-tree__item--important">&nbsp;&nbsp;&nbsp;├── config.php <span class="file-tree__desc">← ⭐ Alle innstillinger her!</span></div>
+                <div class="file-tree__item file-tree__item--folder">&nbsp;&nbsp;&nbsp;├── 📁 api/</div>
+                <div class="file-tree__item file-tree__item--file">&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── chat.php <span class="file-tree__desc">← Backend som snakker med OpenAI</span></div>
+                <div class="file-tree__item file-tree__item--folder">&nbsp;&nbsp;&nbsp;└── 📁 css/</div>
+                <div class="file-tree__item file-tree__item--file">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── style.css <span class="file-tree__desc">← All styling</span></div>
+            </div>
+
+            <div class="info-box info-box--tip">
+                <div class="info-box__title"><i class="fas fa-lightbulb"></i> Tips</div>
+                <p>Start med å forstå <code>config.php</code> - det er her du gjør alle tilpasninger uten å røre resten av koden!</p>
+            </div>
+        </section>
+
+        <!-- Section: Config -->
+        <section id="config" class="section">
+            <h2 class="section__title"><i class="fas fa-cog"></i> Konfigurasjonsfilen (config.php)</h2>
+            
+            <p>
+                Konfigurasjonsfilen inneholder alle innstillinger for chatboten din. 
+                Her bruker vi PHP-funksjonen <code>define()</code> for å lage konstanter.
+            </p>
+
+            <h3 class="section__subtitle">Hva er define()?</h3>
+            <p>
+                <code>define()</code> lager en <strong>konstant</strong> - en verdi som ikke kan endres etter at den er satt.
+                Dette er perfekt for innstillinger som API-nøkler og konfigurasjon.
+            </p>
+
+            <pre><code class="language-php">// Syntaks: define('NAVN', 'verdi');
+
+// Eksempel:
+define('AGENT_NAME', 'MinBot');
+
+// Nå kan du bruke AGENT_NAME hvor som helst i koden:
+echo AGENT_NAME;  // Skriver ut: MinBot</code></pre>
+
+            <div class="info-box info-box--important">
+                <div class="info-box__title"><i class="fas fa-info-circle"></i> Forskjell på konstanter og variabler</div>
+                <p>
+                    <strong>Konstant:</strong> <code>define('NAVN', 'verdi')</code> - kan ikke endres, skrives med STORE BOKSTAVER<br>
+                    <strong>Variabel:</strong> <code>$navn = 'verdi'</code> - kan endres, starter med $-tegn
+                </p>
+            </div>
+        </section>
+
+        <!-- Section: Variabler -->
+        <section id="variabler" class="section">
+            <h2 class="section__title"><i class="fas fa-code"></i> Viktige variabler forklart</h2>
+            
+            <p>Her er alle konstantene du kan endre i <code>config.php</code>:</p>
+
+            <table class="var-table">
+                <thead>
+                    <tr>
+                        <th>Konstant</th>
+                        <th>Forklaring</th>
+                        <th>Eksempel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>OPENAI_API_KEY</code></td>
+                        <td>Din hemmelige nøkkel fra OpenAI. Denne autentiserer deg mot API-et.</td>
+                        <td><code>'sk-abc123...'</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>OPENAI_MODEL</code></td>
+                        <td>Hvilken AI-modell som skal brukes. <code>gpt-4o-mini</code> er rask og billig.</td>
+                        <td><code>'gpt-4o-mini'</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>OPENAI_MAX_TOKENS</code></td>
+                        <td>Maks lengde på AI-svaret. 1 token ≈ 0.75 ord på norsk.</td>
+                        <td><code>1000</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>OPENAI_TEMPERATURE</code></td>
+                        <td>Kreativitet: 0 = presis/konsistent, 1 = kreativ/variert.</td>
+                        <td><code>0.7</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>SYSTEM_PROMPT</code></td>
+                        <td>Instruksjoner til AI-en om hvordan den skal oppføre seg.</td>
+                        <td><code>'Du er en hjelpsom...'</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>AGENT_NAME</code></td>
+                        <td>Navnet på chatboten din som vises i UI.</td>
+                        <td><code>'MatteBot'</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>AGENT_DESCRIPTION</code></td>
+                        <td>Kort beskrivelse som vises under navnet.</td>
+                        <td><code>'Din mattelærer'</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="section__subtitle">System Prompt - Den viktigste innstillingen!</h3>
+            <p>
+                <code>SYSTEM_PROMPT</code> er "hjernen" til chatboten. Den forteller AI-en hvem den er og hvordan den skal oppføre seg.
+            </p>
+
+            <pre><code class="language-php">define('SYSTEM_PROMPT', 'Du er en hjelpsom mattelærer.
+
+Du skal:
+- Forklare konsepter steg for steg
+- Bruke enkle eksempler
+- Gi hint i stedet for fasit
+- Svare på norsk
+
+Du skal IKKE:
+- Gjøre oppgavene for eleven
+- Gi kompliserte forklaringer
+- Svare på ting utenfor matte');</code></pre>
+
+            <div class="info-box info-box--tip">
+                <div class="info-box__title"><i class="fas fa-lightbulb"></i> Tips for gode system prompts</div>
+                <p>
+                    Vær <strong>spesifikk</strong> om hva AI-en skal og ikke skal gjøre. 
+                    Jo mer detaljert, jo bedre resultat!
+                </p>
+            </div>
+
+            <h3 class="section__subtitle">Temperature - Kreativitet vs Presisjon</h3>
+            <p>Denne verdien påvirker hvor "kreativ" eller "konsistent" AI-en er:</p>
+            
+            <table class="var-table">
+                <thead>
+                    <tr>
+                        <th>Verdi</th>
+                        <th>Oppførsel</th>
+                        <th>Best for</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>0.0 - 0.3</code></td>
+                        <td>Veldig konsistent, samme svar hver gang</td>
+                        <td>Fakta, matte, koding</td>
+                    </tr>
+                    <tr>
+                        <td><code>0.4 - 0.7</code></td>
+                        <td>Balansert mellom presisjon og variasjon</td>
+                        <td>Generell hjelp, forklaringer</td>
+                    </tr>
+                    <tr>
+                        <td><code>0.8 - 1.0</code></td>
+                        <td>Kreativ og variert, mer uforutsigbar</td>
+                        <td>Kreativ skriving, brainstorming</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: API -->
+        <section id="api" class="section">
+            <h2 class="section__title"><i class="fas fa-cloud"></i> OpenAI API - Slik fungerer det</h2>
+            
+            <h3 class="section__subtitle">Hva er et API?</h3>
+            <p>
+                Et <strong>API</strong> (Application Programming Interface) er en måte for programmer å snakke sammen.
+                Tenk på det som en kelner på en restaurant:
+            </p>
+            <ul>
+                <li>Du (programmet ditt) gir en bestilling (sender en forespørsel)</li>
+                <li>Kelneren (API-et) tar bestillingen til kjøkkenet (OpenAI sine servere)</li>
+                <li>Kjøkkenet lager maten (AI-en genererer et svar)</li>
+                <li>Kelneren bringer maten tilbake (API-et returnerer svaret)</li>
+            </ul>
+
+            <h3 class="section__subtitle">API-nøkkelen</h3>
+            <p>
+                API-nøkkelen er som et passord som beviser at du har lov til å bruke tjenesten.
+                Den starter alltid med <code>sk-</code> og må holdes <strong>hemmelig</strong>.
+            </p>
+
+            <div class="info-box info-box--warning">
+                <div class="info-box__title"><i class="fas fa-exclamation-triangle"></i> Viktig sikkerhet!</div>
+                <p>
+                    Aldri del API-nøkkelen din eller legg den på GitHub! 
+                    Hvis noen får tak i den, kan de bruke den og du må betale for bruken.
+                </p>
+            </div>
+
+            <h3 class="section__subtitle">Meldingsstrukturen</h3>
+            <p>OpenAI API forventer meldinger i et spesifikt JSON-format med "roller":</p>
+
+            <pre><code class="language-json">{
+    "model": "gpt-4o-mini",
+    "messages": [
+        {
+            "role": "system",
+            "content": "Du er en hjelpsom assistent..."
+        },
+        {
+            "role": "user", 
+            "content": "Hva er 2+2?"
+        },
+        {
+            "role": "assistant",
+            "content": "2+2 er lik 4."
+        },
+        {
+            "role": "user",
+            "content": "Takk! Hva med 3+3?"
+        }
+    ],
+    "max_tokens": 1000,
+    "temperature": 0.7
+}</code></pre>
+
+            <table class="var-table">
+                <thead>
+                    <tr>
+                        <th>Rolle</th>
+                        <th>Forklaring</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>system</code></td>
+                        <td>Instruksjoner til AI-en (System Prompt). Sendes alltid først.</td>
+                    </tr>
+                    <tr>
+                        <td><code>user</code></td>
+                        <td>Meldinger fra brukeren (det du skriver i chatten).</td>
+                    </tr>
+                    <tr>
+                        <td><code>assistant</code></td>
+                        <td>Tidligere svar fra AI-en (for kontekst i samtalen).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: API Call -->
+        <section id="api-kall" class="section">
+            <h2 class="section__title"><i class="fas fa-paper-plane"></i> Sende API-kall med PHP</h2>
+            
+            <p>
+                For å sende data til OpenAI bruker vi PHP sin <code>cURL</code> bibliotek. 
+                Her er en forenklet versjon av hvordan det fungerer:
+            </p>
+
+            <pre><code class="language-php">&lt;?php
+// 1. Forbered dataen vi skal sende
+$data = [
+    'model' => 'gpt-4o-mini',
+    'messages' => [
+        ['role' => 'system', 'content' => 'Du er en hjelpsom assistent.'],
+        ['role' => 'user', 'content' => 'Hei, hvordan har du det?']
+    ],
+    'max_tokens' => 1000,
+    'temperature' => 0.7
+];
+
+// 2. Sett opp cURL
+$ch = curl_init();
+
+curl_setopt_array($ch, [
+    // URL til OpenAI API
+    CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
+    
+    // Vi vil ha svaret tilbake som tekst
+    CURLOPT_RETURNTRANSFER => true,
+    
+    // Vi sender data (POST request)
+    CURLOPT_POST => true,
+    
+    // Dataen vi sender (konvertert til JSON)
+    CURLOPT_POSTFIELDS => json_encode($data),
+    
+    // Headers - forteller API-et hvem vi er
+    CURLOPT_HTTPHEADER => [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $api_key  // Din API-nøkkel
+    ]
+]);
+
+// 3. Send forespørselen og få svar
+$response = curl_exec($ch);
+curl_close($ch);
+
+// 4. Konverter JSON-svar til PHP-array
+$result = json_decode($response, true);
+
+// 5. Hent ut selve svaret
+$ai_svar = $result['choices'][0]['message']['content'];
+
+echo $ai_svar;  // "Hei! Jeg har det bra, takk for at du spør..."
+?&gt;</code></pre>
+
+            <h3 class="section__subtitle">Viktige cURL-innstillinger forklart</h3>
+            <table class="var-table">
+                <thead>
+                    <tr>
+                        <th>Innstilling</th>
+                        <th>Forklaring</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CURLOPT_URL</code></td>
+                        <td>Adressen vi sender forespørselen til</td>
+                    </tr>
+                    <tr>
+                        <td><code>CURLOPT_RETURNTRANSFER</code></td>
+                        <td>Returnér svaret i stedet for å skrive det ut direkte</td>
+                    </tr>
+                    <tr>
+                        <td><code>CURLOPT_POST</code></td>
+                        <td>Bruk POST-metode (for å sende data)</td>
+                    </tr>
+                    <tr>
+                        <td><code>CURLOPT_POSTFIELDS</code></td>
+                        <td>Dataen som sendes med forespørselen</td>
+                    </tr>
+                    <tr>
+                        <td><code>CURLOPT_HTTPHEADER</code></td>
+                        <td>Ekstra informasjon (inkludert API-nøkkel)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="section__subtitle">JSON - Dataformat for web</h3>
+            <p>
+                <strong>JSON</strong> (JavaScript Object Notation) er et tekstformat for å sende data mellom systemer.
+                PHP har innebygde funksjoner for å jobbe med JSON:
+            </p>
+
+            <pre><code class="language-php">// PHP array → JSON tekst
+$data = ['name' => 'Ola', 'age' => 17];
+$json = json_encode($data);
+// Resultat: '{"name":"Ola","age":17}'
+
+// JSON tekst → PHP array
+$json = '{"name":"Ola","age":17}';
+$data = json_decode($json, true);
+// Resultat: ['name' => 'Ola', 'age' => 17]</code></pre>
+        </section>
+
+        <!-- Section: Frontend -->
+        <section id="frontend" class="section">
+            <h2 class="section__title"><i class="fab fa-js"></i> Frontend JavaScript</h2>
+            
+            <p>
+                Frontend-en (det brukeren ser) bruker JavaScript for å sende meldinger til PHP-backend 
+                og vise svarene i chatten.
+            </p>
+
+            <h3 class="section__subtitle">Sende melding med fetch()</h3>
+            <p>
+                <code>fetch()</code> er en moderne måte å sende HTTP-forespørsler fra JavaScript:
+            </p>
+
+            <pre><code class="language-javascript">// Når brukeren sender en melding
+async function sendMessage(message) {
+    // Vis at vi venter på svar
+    showTypingIndicator();
+    
+    try {
+        // Send til PHP-backend
+        const response = await fetch('api/chat.php', {
+            method: 'POST',                          // POST = send data
+            headers: {
+                'Content-Type': 'application/json'   // Vi sender JSON
+            },
+            body: JSON.stringify({                   // Konverter til JSON
+                message: message,
+                history: conversationHistory          // Tidligere meldinger
+            })
+        });
+        
+        // Konverter svaret fra JSON
+        const data = await response.json();
+        
+        // Vis AI-svaret i chatten
+        if (data.error) {
+            showError(data.error);
+        } else {
+            addMessage(data.response, 'ai');
+        }
+        
+    } catch (error) {
+        showError('Kunne ikke koble til serveren');
+    }
+}</code></pre>
+
+            <h3 class="section__subtitle">Viktige JavaScript-konsepter</h3>
+
+            <table class="var-table">
+                <thead>
+                    <tr>
+                        <th>Konsept</th>
+                        <th>Forklaring</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>async/await</code></td>
+                        <td>Lar oss vente på svar før vi fortsetter. <code>await</code> pauser koden til forespørselen er ferdig.</td>
+                    </tr>
+                    <tr>
+                        <td><code>fetch()</code></td>
+                        <td>Sender HTTP-forespørsler til en server. Returnerer et "Promise" (løfte om data).</td>
+                    </tr>
+                    <tr>
+                        <td><code>JSON.stringify()</code></td>
+                        <td>Konverterer JavaScript-objekt til JSON-tekst.</td>
+                    </tr>
+                    <tr>
+                        <td><code>response.json()</code></td>
+                        <td>Konverterer JSON-svar tilbake til JavaScript-objekt.</td>
+                    </tr>
+                    <tr>
+                        <td><code>try/catch</code></td>
+                        <td>Fanger opp feil slik at appen ikke krasjer hvis noe går galt.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="section__subtitle">Samtalehistorikk</h3>
+            <p>
+                For at AI-en skal huske hva dere har snakket om, sender vi med tidligere meldinger:
+            </p>
+
+            <pre><code class="language-javascript">// Array som lagrer alle meldinger
+let conversationHistory = [];
+
+// Når bruker sender melding
+conversationHistory.push({ role: 'user', content: message });
+
+// Når AI svarer
+conversationHistory.push({ role: 'assistant', content: aiResponse });
+
+// Send kun de siste 10 meldingene (for å spare tokens)
+const recentHistory = conversationHistory.slice(-10);</code></pre>
+        </section>
+
+        <!-- Section: Tilpasning -->
+        <section id="tilpasning" class="section">
+            <h2 class="section__title"><i class="fas fa-palette"></i> Tilpasse designet</h2>
+            
+            <p>
+                All styling er i <code>css/style.css</code>. 
+                Fargene er definert som CSS-variabler i <code>:root</code>, som gjør det enkelt å endre hele fargetemaet:
+            </p>
+
+            <pre><code class="language-css">:root {
+    /* Hovedfarger */
+    --primary: #6366f1;           /* Primærfarge (knapper, lenker) */
+    --primary-light: #818cf8;     /* Lysere variant */
+    --primary-dark: #4f46e5;      /* Mørkere variant */
+    
+    /* Bakgrunner */
+    --bg-main: #0f172a;           /* Hovedbakgrunn */
+    --bg-card: #1e293b;           /* Kort/bokser */
+    --bg-input: #334155;          /* Input-felt */
+    
+    /* Tekst */
+    --text-primary: #f1f5f9;      /* Hovedtekst */
+    --text-secondary: #94a3b8;    /* Sekundær tekst */
+    
+    /* Chat-bobler */
+    --user-bubble: linear-gradient(135deg, #6366f1, #8b5cf6);
+    --ai-bubble: #334155;
+}</code></pre>
+
+            <h3 class="section__subtitle">Eksempel: Endre til grønt tema</h3>
+            <pre><code class="language-css">:root {
+    --primary: #22c55e;           /* Grønn */
+    --primary-light: #4ade80;
+    --user-bubble: linear-gradient(135deg, #22c55e, #16a34a);
+}</code></pre>
+
+            <div class="info-box info-box--tip">
+                <div class="info-box__title"><i class="fas fa-lightbulb"></i> Tips</div>
+                <p>
+                    Bruk et verktøy som <a href="https://coolors.co" target="_blank">Coolors.co</a> 
+                    for å finne fine fargekombinasjoner!
+                </p>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="section">
+            <h2 class="section__title"><i class="fas fa-check-circle"></i> Oppsummering</h2>
+            
+            <p>Nå vet du hvordan alle delene fungerer sammen:</p>
+            
+            <ol>
+                <li><strong>config.php</strong> - Alle innstillinger samlet på ett sted</li>
+                <li><strong>index.php</strong> - Frontend med HTML og JavaScript</li>
+                <li><strong>api/chat.php</strong> - Backend som snakker med OpenAI</li>
+                <li><strong>css/style.css</strong> - All styling med CSS-variabler</li>
+            </ol>
+
+            <p>For å lage din egen chatbot:</p>
+            <ol>
+                <li>Få en API-nøkkel fra <a href="https://platform.openai.com" target="_blank">OpenAI</a></li>
+                <li>Kopier filstrukturen</li>
+                <li>Tilpass <code>config.php</code> med din nøkkel og system prompt</li>
+                <li>Endre <code>style.css</code> for ditt eget design</li>
+                <li>Last opp til et webhotell med PHP-støtte</li>
+            </ol>
+
+            <div class="info-box info-box--important">
+                <div class="info-box__title"><i class="fas fa-rocket"></i> Lykke til!</div>
+                <p>
+                    Eksperimenter med forskjellige system prompts for å lage unike chatboter. 
+                    En mattebot, historieforteller, eller kanskje en quiz-bot?
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Laget for elever som vil lære å bygge AI-applikasjoner 🎓</p>
+    </footer>
+
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
