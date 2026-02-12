@@ -67,4 +67,3 @@ define('AGENT_NAME', 'CncGPT');
  * AGENT BESKRIVELSE - Kort beskrivelse som vises på siden
  */
 define('AGENT_DESCRIPTION', 'Jeg kan fortelle deg om noe er lovelig eller ikke');
-
